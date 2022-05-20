@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useCallback } from 'react'
-
 import MoviesList from './components/MoviesList'
+import AddMovie from './components/AddMovie';
+
 import './App.css'
 
 function App() {
@@ -8,12 +9,12 @@ function App() {
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState(null)
 
+  // Function that makes the http request
   const fetchMoviesHandler = useCallback(async () => {
     setIsLoading(true)
     setError(null)
-
     try {
-      const response = await fetch('https://swapi.dev/api/films')
+      const response = await fetch('https://http-request-2f250-default-rtdb.firebaseio.com/movies.json')
 
       // fetch doesn't handle errors by default, so we need to check manually 
       if (!response.ok) {
@@ -36,11 +37,16 @@ function App() {
     setIsLoading(false) 
   },[])
 
+  // Request the movie list when the page is loaged
   useEffect(() => {
     fetchMoviesHandler()
   },[fetchMoviesHandler])
 
+  function addMovieHandler(movie) {
+    console.log(movie)
+  }
 
+  // Set de conditions to render the list of movies or status messages
   let content = <p>Found no movies.</p>
   if (movies.length > 0)
     content = <MoviesList movies={movies} />
@@ -52,6 +58,9 @@ function App() {
 
   return (
     <React.Fragment>
+      <section>
+        <AddMovie onAddMovie={addMovieHandler}/>
+      </section>
       <section>
         <button onClick={fetchMoviesHandler}>Fetch Movies</button>
       </section>
